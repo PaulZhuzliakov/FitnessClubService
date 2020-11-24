@@ -30,6 +30,14 @@ public class ClientService {
         }
     }
 
+//    public List<Client> getListOfClients() {
+//        try {
+//            return clientRepository.getListOfClients();
+//        } catch (Exception e) {
+//            throw new RuntimeException("", e);
+//        }
+//    }
+
     public void createClient(Client client) {
         try {
             clientRepository.createClient(client);
@@ -49,6 +57,14 @@ public class ClientService {
     public void deleteClientById(Integer clientId) {
         try {
             clientRepository.deleteClientById(clientId);
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
+    }
+
+    public Client getClientByFIO(String lastName, String firstName, String middleName) {
+        try {
+            return clientRepository.getClientByFIO(lastName, firstName, middleName);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }

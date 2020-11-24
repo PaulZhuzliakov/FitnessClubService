@@ -25,6 +25,28 @@ public class ClientResource {
     }
 
     @GET
+    @Path("/searchByFIO")
+    public Client getClientByFIO(
+            @QueryParam("lastname") String lastName,
+            @QueryParam("firstname") String firstName,
+            @QueryParam("middlename") String middleName)
+    {
+        return clientService.getClientByFIO(lastName, firstName, middleName);
+    }
+
+
+
+//    @GET
+//    public List<Client> getListOfClients(
+//            @QueryParam("lastname") String lastName,
+//            @QueryParam("firstname") String firstName,
+//            @QueryParam("middlename") String middleName)
+//    {
+//        return clientService.getListOfClients(lastName, firstName, middleName);
+//    }
+
+    @GET
+    @Path("/getAllClients")
     public List<Client> getListOfClients() {
         return clientService.getListOfClients();
     }

@@ -54,6 +54,27 @@ public class ClientRepository {
         return clients;
     }
 
+//    public List<Client> getListOfClients() {
+//        List<Client> clients = new ArrayList<>();
+//        String sql = "SELECT * FROM clients";
+//        try (Connection connection = DriverManager.getConnection(url, user, pass);
+//             Statement statement = connection.createStatement()) {
+//            ResultSet resultSet = statement.executeQuery(sql);
+//            while (resultSet.next()) {
+//                Client client = new Client();
+//                client.setId(resultSet.getInt("id"));
+//                client.setClubCardNumber(resultSet.getInt("club_card_number"));
+//                client.setLastName(resultSet.getString("last_name"));
+//                client.setFirstName(resultSet.getString("first_name"));
+//                client.setMiddleName(resultSet.getString("middle_name"));
+//                clients.add(client);
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//        return clients;
+//    }
+
     public void createClient(Client client) {
         String sql = "INSERT INTO clients VALUES (?,?,?,?,?)";
         try (Connection connection = DriverManager.getConnection(url, user, pass);
@@ -94,4 +115,24 @@ public class ClientRepository {
         }
     }
 
+    public Client getClientByFIO(String lastName, String firstName, String middleName) {
+        Client client = new Client();
+        String sql = "SELECT * FROM clients WHERE last_name = '" + lastName + "'"
+                + " AND first_name = '" + firstName + "'"
+                + " AND middle_name = '" + middleName + "'";
+        try (Connection connection = DriverManager.getConnection(url, user, pass);
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
+            if (resultSet.next()) {
+                client.setId(resultSet.getInt("id"));
+                client.setClubCardNumber(resultSet.getInt("club_card_number"));
+                client.setLastName(resultSet.getString("last_name"));
+                client.setFirstName(resultSet.getString("first_name"));
+                client.setMiddleName(resultSet.getString("middle_name"));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        return client;
+    }
 }
