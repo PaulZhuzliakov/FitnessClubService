@@ -1,6 +1,6 @@
 package org.demo.project.service;
 
-import org.demo.project.model.Client;
+import org.demo.project.model.ClubClient;
 import org.demo.project.repo.ClientRepository;
 
 import javax.enterprise.context.RequestScoped;
@@ -13,7 +13,23 @@ public class ClientService {
     @Inject
     ClientRepository clientRepository;
 
-    public Client getClientById(Integer clientId) {
+    public ClubClient getClientByFIO(String lastName, String firstName, String middleName) {
+        try {
+            return clientRepository.getClientByFIO(lastName, firstName, middleName);
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
+    }
+
+    public void createClient(ClubClient clubClient) {
+        try {
+            clientRepository.createClient(clubClient);
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
+    }
+
+    public ClubClient getClientById(Integer clientId) {
         try {
             return clientRepository.getPatientById(clientId);
         } catch (Exception e) {
@@ -21,8 +37,7 @@ public class ClientService {
         }
     }
 
-
-    public List<Client> getListOfClients() {
+    public List<ClubClient> getListOfClients() {
         try {
             return clientRepository.getListOfClients();
         } catch (Exception e) {
@@ -30,23 +45,8 @@ public class ClientService {
         }
     }
 
-//    public List<Client> getListOfClients() {
-//        try {
-//            return clientRepository.getListOfClients();
-//        } catch (Exception e) {
-//            throw new RuntimeException("", e);
-//        }
-//    }
 
-    public void createClient(Client client) {
-        try {
-            clientRepository.createClient(client);
-        } catch (Exception e) {
-            throw new RuntimeException("", e);
-        }
-    }
-
-    public void updateClient(Client client) {
+    public void updateClient(ClubClient client) {
         try {
             clientRepository.updateClient(client);
         } catch (Exception e) {
@@ -62,11 +62,21 @@ public class ClientService {
         }
     }
 
-    public Client getClientByFIO(String lastName, String firstName, String middleName) {
-        try {
-            return clientRepository.getClientByFIO(lastName, firstName, middleName);
-        } catch (Exception e) {
-            throw new RuntimeException("", e);
-        }
-    }
+
+//    public List<Client> getListOfClients() {
+//        try {
+//            return clientRepository.getListOfClients();
+//        } catch (Exception e) {
+//            throw new RuntimeException("", e);
+//        }
+//    }
+
+//    public void createClient(ClubClient client) {
+//        try {
+//            clientRepository.createClient(client);
+//        } catch (Exception e) {
+//            throw new RuntimeException("", e);
+//        }
+//    }
+
 }

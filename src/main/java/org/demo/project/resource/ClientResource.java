@@ -1,6 +1,6 @@
 package org.demo.project.resource;
 
-import org.demo.project.model.Client;
+import org.demo.project.model.ClubClient;
 import org.demo.project.service.ClientService;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -20,21 +20,46 @@ public class ClientResource {
 
     @GET
     @Path("/{id}")
-    public Client getClientById(@PathParam("id") Integer clientId) {
+    public ClubClient getClientById(@PathParam("id") Integer clientId) {
         return clientService.getClientById(clientId);
     }
 
     @GET
     @Path("/searchByFIO")
-    public Client getClientByFIO(
+    public ClubClient getClientByFIO(
             @QueryParam("lastname") String lastName,
             @QueryParam("firstname") String firstName,
-            @QueryParam("middlename") String middleName)
-    {
+            @QueryParam("middlename") String middleName) {
         return clientService.getClientByFIO(lastName, firstName, middleName);
     }
 
+    @GET
+    @Path("/getAllClients")
+    public List<ClubClient> getListOfClients() {
+        return clientService.getListOfClients();
+    }
 
+    @POST
+    @Path("/addByFIO")
+    public void createClient(ClubClient clubClient) {
+        clientService.createClient(clubClient);
+    }
+
+    @PUT
+    public ClubClient updateClient(ClubClient client) {
+        clientService.updateClient(client);
+        return client;
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public ClubClient deleteClientById(@PathParam("id") Integer clientId) {
+        ClubClient client = clientService.getClientById(clientId);
+        if (client.getId() != 0) {
+            clientService.deleteClientById(clientId);
+        }
+        return client;
+    }
 
 //    @GET
 //    public List<Client> getListOfClients(
@@ -45,33 +70,10 @@ public class ClientResource {
 //        return clientService.getListOfClients(lastName, firstName, middleName);
 //    }
 
-    @GET
-    @Path("/getAllClients")
-    public List<Client> getListOfClients() {
-        return clientService.getListOfClients();
-    }
-
-    @POST
-    public Client createClient(Client client) {
-        clientService.createClient(client);
-        return client;
-    }
-
-
-    @PUT
-    public Client updateClient(Client client) {
-        clientService.updateClient(client);
-        return client;
-    }
-
-    @DELETE
-    @Path("/{id}")
-    public Client deleteClientById(@PathParam("id") Integer clientId) {
-        Client client = clientService.getClientById(clientId);
-        if (client.getId() != 0) {
-            clientService.deleteClientById(clientId);
-        }
-        return client;
-    }
+//    @POST
+//    public ClubClient createClient(ClubClient client) {
+//        clientService.createClient(client);
+//        return client;
+//    }
 
 }

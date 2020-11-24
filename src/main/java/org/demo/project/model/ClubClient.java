@@ -3,7 +3,7 @@ package org.demo.project.model;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class Client {
+public class ClubClient {
 
     private int id;
     private int clubCardNumber;
@@ -11,10 +11,10 @@ public class Client {
     private String firstName;
     private String middleName;
 
-    public Client() {
+    public ClubClient() {
     }
 
-    public Client(int id, int clubCardNumber, String lastName, String firstName, String middleName) {
+    public ClubClient(int id, int clubCardNumber, String lastName, String firstName, String middleName) {
         this.id = id;
         this.clubCardNumber = clubCardNumber;
         this.lastName = lastName;
@@ -22,7 +22,13 @@ public class Client {
         this.middleName = middleName;
     }
 
-    public Client(int id, String a, String d, String f, int i) {
+    public ClubClient(String lastName, String firstName, String middleName) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.middleName = middleName;
+    }
+
+    public ClubClient(int id, String a, String d, String f, int i) {
     }
 
     public int getId() {
