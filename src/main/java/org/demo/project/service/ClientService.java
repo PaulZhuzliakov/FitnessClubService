@@ -31,7 +31,15 @@ public class ClientService {
 
     public ClubClient getClientById(Integer clientId) {
         try {
-            return clientRepository.getPatientById(clientId);
+            return clientRepository.getClientById(clientId);
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
+    }
+
+    public List<ClubClient> getListOfClientsByFIO(String lastName, String firstName, String middleName) {
+        try {
+            return clientRepository.getListOfClientsByFIO(lastName, firstName, middleName);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
@@ -45,10 +53,9 @@ public class ClientService {
         }
     }
 
-
-    public void updateClient(ClubClient client) {
+    public void updateClient(ClubClient clubClient, int id) {
         try {
-            clientRepository.updateClient(client);
+            clientRepository.updateClient(clubClient, id);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
@@ -61,22 +68,5 @@ public class ClientService {
             throw new RuntimeException("", e);
         }
     }
-
-
-//    public List<Client> getListOfClients() {
-//        try {
-//            return clientRepository.getListOfClients();
-//        } catch (Exception e) {
-//            throw new RuntimeException("", e);
-//        }
-//    }
-
-//    public void createClient(ClubClient client) {
-//        try {
-//            clientRepository.createClient(client);
-//        } catch (Exception e) {
-//            throw new RuntimeException("", e);
-//        }
-//    }
 
 }

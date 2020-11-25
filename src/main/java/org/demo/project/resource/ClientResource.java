@@ -34,6 +34,15 @@ public class ClientResource {
     }
 
     @GET
+    @Path("/getClientsByFIO")
+    public List<ClubClient> getListOfClientsByFIO(
+            @QueryParam("lastname") String lastName,
+            @QueryParam("firstname") String firstName,
+            @QueryParam("middlename") String middleName) {
+        return clientService.getListOfClientsByFIO(lastName, firstName, middleName);
+    }
+
+    @GET
     @Path("/getAllClients")
     public List<ClubClient> getListOfClients() {
         return clientService.getListOfClients();
@@ -46,13 +55,13 @@ public class ClientResource {
     }
 
     @PUT
-    public ClubClient updateClient(ClubClient client) {
-        clientService.updateClient(client);
-        return client;
+    @Path("update/")
+    public void updateClient(ClubClient clubClient, @QueryParam("id") int id) {
+        clientService.updateClient(clubClient, id);
     }
 
     @DELETE
-    @Path("/{id}")
+    @Path("deleteById/{id}")
     public ClubClient deleteClientById(@PathParam("id") Integer clientId) {
         ClubClient client = clientService.getClientById(clientId);
         if (client.getId() != 0) {
@@ -60,20 +69,5 @@ public class ClientResource {
         }
         return client;
     }
-
-//    @GET
-//    public List<Client> getListOfClients(
-//            @QueryParam("lastname") String lastName,
-//            @QueryParam("firstname") String firstName,
-//            @QueryParam("middlename") String middleName)
-//    {
-//        return clientService.getListOfClients(lastName, firstName, middleName);
-//    }
-
-//    @POST
-//    public ClubClient createClient(ClubClient client) {
-//        clientService.createClient(client);
-//        return client;
-//    }
 
 }
