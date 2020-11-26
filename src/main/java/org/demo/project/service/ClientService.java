@@ -1,10 +1,12 @@
 package org.demo.project.service;
 
 import org.demo.project.model.ClubClient;
+import org.demo.project.model.VisitDate;
 import org.demo.project.repo.ClientRepository;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import java.sql.Date;
 import java.util.List;
 
 @RequestScoped
@@ -64,6 +66,30 @@ public class ClientService {
     public void deleteClientById(Integer clientId) {
         try {
             clientRepository.deleteClientById(clientId);
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
+    }
+
+    public void confirmClientVisit(VisitDate visitDate) {
+        try {
+            clientRepository.confirmClientVisit(visitDate);
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
+    }
+
+    public List<VisitDate> getListOfVisitsDates(int id) {
+        try {
+            return clientRepository.getListOfVisitsDates(id);
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
+    }
+
+    public int getNumberOfVisitsDays(int id) {
+        try {
+            return clientRepository.getNumberOfVisitsDays(id);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }

@@ -1,12 +1,14 @@
 package org.demo.project.resource;
 
 import org.demo.project.model.ClubClient;
+import org.demo.project.model.VisitDate;
 import org.demo.project.service.ClientService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.sql.Date;
 import java.util.List;
 
 @ApplicationScoped
@@ -43,9 +45,27 @@ public class ClientResource {
     }
 
     @GET
+    @Path("/viewVisits")
+    public List<VisitDate> getListOfVisitsDates(@QueryParam("id") int id) {
+        return clientService.getListOfVisitsDates(id);
+    }
+
+    @GET
+    @Path("/calcMembershipCard")
+    public int getNumberOfVisitsDays(@QueryParam("id") int id) {
+        return clientService.getNumberOfVisitsDays(id);
+    }
+
+    @GET
     @Path("/getAllClients")
     public List<ClubClient> getListOfClients() {
         return clientService.getListOfClients();
+    }
+
+    @POST
+    @Path("/confirmClientVisit")
+    public void confirmClientVisit(VisitDate visitDate) {
+        clientService.confirmClientVisit(visitDate);
     }
 
     @POST

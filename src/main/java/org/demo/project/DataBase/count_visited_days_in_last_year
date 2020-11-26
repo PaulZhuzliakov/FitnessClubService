@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM attendance WHERE client_id = 53 and date >= (NOW() - INTERVAL '365 DAYS')
