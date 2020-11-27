@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.sql.Date;
 import java.util.List;
 
 @ApplicationScoped
@@ -20,21 +19,14 @@ public class ClientResource {
     @Inject
     ClientService clientService;
 
+    //возвращает список всех клиентов
     @GET
-    @Path("/{id}")
-    public ClubClient getClientById(@PathParam("id") Integer clientId) {
-        return clientService.getClientById(clientId);
+    @Path("/getAllClients")
+    public List<ClubClient> getListOfClients() {
+        return clientService.getListOfClients();
     }
 
-    @GET
-    @Path("/searchByFIO")
-    public ClubClient getClientByFIO(
-            @QueryParam("lastname") String lastName,
-            @QueryParam("firstname") String firstName,
-            @QueryParam("middlename") String middleName) {
-        return clientService.getClientByFIO(lastName, firstName, middleName);
-    }
-
+    //возвращает список клиентов по ФИО
     @GET
     @Path("/getClientsByFIO")
     public List<ClubClient> getListOfClientsByFIO(
@@ -44,50 +36,49 @@ public class ClientResource {
         return clientService.getListOfClientsByFIO(lastName, firstName, middleName);
     }
 
-    @GET
-    @Path("/viewVisits")
-    public List<VisitDate> getListOfVisitsDates(@QueryParam("id") int id) {
-        return clientService.getListOfVisitsDates(id);
-    }
-
-    @GET
-    @Path("/calcMembershipCard")
-    public int getNumberOfVisitsDays(@QueryParam("id") int id) {
-        return clientService.getNumberOfVisitsDays(id);
-    }
-
-    @GET
-    @Path("/getAllClients")
-    public List<ClubClient> getListOfClients() {
-        return clientService.getListOfClients();
-    }
-
-    @POST
-    @Path("/confirmClientVisit")
-    public void confirmClientVisit(VisitDate visitDate) {
-        clientService.confirmClientVisit(visitDate);
-    }
-
+    //добавляет клиента
     @POST
     @Path("/addByFIO")
     public void createClient(ClubClient clubClient) {
         clientService.createClient(clubClient);
     }
 
+    //редактирует клиента
     @PUT
     @Path("update/")
     public void updateClient(ClubClient clubClient, @QueryParam("id") int id) {
         clientService.updateClient(clubClient, id);
     }
 
+    //удаление клиента
     @DELETE
     @Path("deleteById/{id}")
-    public ClubClient deleteClientById(@PathParam("id") Integer clientId) {
-        ClubClient client = clientService.getClientById(clientId);
-        if (client.getId() != 0) {
-            clientService.deleteClientById(clientId);
-        }
-        return client;
+    public void deleteClientById(@PathParam("id") Integer clientId) {
+        clientService.deleteClientById(clientId);
+    }
+
+
+    //ниже методы для с таблицой посещаемости. надо вынести в отдельный класс
+
+    //отметить сегодняшнее посещение
+    @POST
+    @Path("/confirmClientVisit")
+    public void confirmClientVisit(VisitDate visitDate) {
+        clientService.confirmClientVisit(visitDate);
+    }
+
+    //получить список посещений одного клиента по его id
+    @GET
+    @Path("/viewVisits")
+    public List<VisitDate> getListOfVisitsDates(@QueryParam("id") int id) {
+        return clientService.getListOfVisitsDates(id);
+    }
+
+    //получить количество посещений клиента за год начиная с сегодняшнего дня по его id
+    @GET
+    @Path("/calcMembershipCard")
+    public int getNumberOfVisitsDays(@QueryParam("id") int id) {
+        return clientService.getNumberOfVisitsDays(id);
     }
 
 }

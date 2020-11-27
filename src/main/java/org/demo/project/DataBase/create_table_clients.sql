@@ -1,3 +1,4 @@
+-- создание таблицы клиентов
 create table clients
 (
     id serial not null,

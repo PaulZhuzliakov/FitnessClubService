@@ -1,3 +1,4 @@
+-- создание таблицы с датами посещения. связанна с таблицей клиентов
 create table attendance
 (
     id serial not null

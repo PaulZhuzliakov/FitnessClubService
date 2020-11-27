@@ -6,18 +6,19 @@ import org.demo.project.repo.ClientRepository;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import java.sql.Date;
 import java.util.List;
 
+//Класс получает запросы от методов из класса ClientResource, который принимает HTML-запросы
+//и передаёт в класс ClientRepository, который работает с базой данных)
 @RequestScoped
 public class ClientService {
 
     @Inject
     ClientRepository clientRepository;
 
-    public ClubClient getClientByFIO(String lastName, String firstName, String middleName) {
+    public List<ClubClient> getListOfClientsByFIO(String lastName, String firstName, String middleName) {
         try {
-            return clientRepository.getClientByFIO(lastName, firstName, middleName);
+            return clientRepository.getListOfClientsByFIO(lastName, firstName, middleName);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
@@ -31,17 +32,9 @@ public class ClientService {
         }
     }
 
-    public ClubClient getClientById(Integer clientId) {
+    public void deleteClientById(Integer clientId) {
         try {
-            return clientRepository.getClientById(clientId);
-        } catch (Exception e) {
-            throw new RuntimeException("", e);
-        }
-    }
-
-    public List<ClubClient> getListOfClientsByFIO(String lastName, String firstName, String middleName) {
-        try {
-            return clientRepository.getListOfClientsByFIO(lastName, firstName, middleName);
+            clientRepository.deleteClientById(clientId);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
@@ -63,13 +56,8 @@ public class ClientService {
         }
     }
 
-    public void deleteClientById(Integer clientId) {
-        try {
-            clientRepository.deleteClientById(clientId);
-        } catch (Exception e) {
-            throw new RuntimeException("", e);
-        }
-    }
+
+//ниже методы для с таблицой посещаемости. надо вынести в отдельный класс
 
     public void confirmClientVisit(VisitDate visitDate) {
         try {
