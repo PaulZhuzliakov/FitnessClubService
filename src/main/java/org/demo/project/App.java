@@ -7,4 +7,5 @@ import javax.ws.rs.core.Application;
 @ApplicationScoped
 @ApplicationPath("")
 public class App extends Application {
+
 }

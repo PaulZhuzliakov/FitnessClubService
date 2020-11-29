@@ -1,20 +1,38 @@
 package org.demo.project.repo;
 
+import org.demo.project.DataBase.DBCredentialInit;
 import org.demo.project.model.ClubClient;
-import org.demo.project.model.VisitDate;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 @ApplicationScoped
-public class ClientRepository {
-    final String url = "jdbc:postgresql://localhost:5432/fitness_club";
-    final String user = "postgres";
-    final String pass = "postgres";
+public class ClubClientRepository {
+//    String url = "jdbc:postgresql://localhost:5432/fitness_club";
+//    String user = "postgres";
+//    String pass = "postgres";
 
-    //ниже методы для работы работы с таблицей
+    String url = DBCredentialInit.setProperties("url");
+    String user = DBCredentialInit.setProperties("user");
+    String pass = DBCredentialInit.setProperties("pass");
+
+    public String setProperties(String propertyKey) {
+        Properties prop = new Properties();
+        String result = "";
+        try (InputStream inputStream = getClass()
+                .getClassLoader().getResourceAsStream("config.properties")) {
+            prop.load(inputStream);
+            result = prop.getProperty(propertyKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     //возвращает список всех клиентов
     public List<ClubClient> getListOfClients() {
@@ -41,9 +59,28 @@ public class ClientRepository {
     //возвращает список клиентов по ФИО
     public List<ClubClient> getListOfClientsByFIO(String lastName, String firstName, String middleName) {
         List<ClubClient> clients = new ArrayList<>();
-        String sql = "SELECT * FROM clients WHERE last_name = '" + lastName + "'"
-                + " AND first_name = '" + firstName + "'"
-                + " AND middle_name = '" + middleName + "'";
+        String sql = "";
+        if (!lastName.equals("") && !firstName.equals("") && !middleName.equals("")) {
+            sql = "SELECT * FROM clients WHERE last_name = '" + lastName + "'"
+                    + " AND first_name = '" + firstName + "'"
+                    + " AND middle_name = '" + middleName + "'";
+        } else if (!lastName.equals("") && !firstName.equals("") && middleName.equals("")) {
+            sql = "SELECT * FROM clients WHERE last_name = '" + lastName + "'"
+                    + " AND first_name = '" + firstName + "'";
+        } else if (!lastName.equals("") && firstName.equals("") && !middleName.equals("")) {
+            sql = "SELECT * FROM clients WHERE last_name = '" + lastName + "'"
+                    + " AND middle_name = '" + middleName + "'";
+        } else if (!lastName.equals("") && firstName.equals("") && middleName.equals("")) {
+            sql = "SELECT * FROM clients WHERE last_name = '" + lastName + "'";
+        } else if (lastName.equals("") && !firstName.equals("") && !middleName.equals("")) {
+            sql = "SELECT * FROM clients WHERE first_name = '" + firstName + "'"
+                    + " AND middle_name = '" + middleName + "'";
+        } else if (lastName.equals("") && !firstName.equals("") && middleName.equals("")) {
+            sql = "SELECT * FROM clients WHERE first_name = '" + firstName + "'";
+        } else if (lastName.equals("") && firstName.equals("") && !middleName.equals("")) {
+            sql = "SELECT * FROM clients WHERE middle_name = '" + middleName + "'";
+        }
+
         try (Connection connection = DriverManager.getConnection(url, user, pass);
              Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
@@ -91,7 +128,7 @@ public class ClientRepository {
         }
     }
 
-    //удаляет клиента
+    //удаляет клиента по id
     public void deleteClientById(Integer clientId) {
         String sql = "DELETE FROM clients WHERE id=?";
         try (Connection connection = DriverManager.getConnection(url, user, pass);
@@ -103,59 +140,4 @@ public class ClientRepository {
         }
     }
 
-
-    //ниже методы для с таблицой посещаемости. надо вынести в отдельный класс
-
-    //добавляет в таблицу посещаемости дату сегодняшнего посещения
-    public void confirmClientVisit(VisitDate visitDate) {
-
-        String sql = "INSERT INTO attendance (date, client_id)\n" +
-                "SELECT '" + visitDate.getDate() + "' AS date, " + visitDate.getClientId() + " AS client_id FROM attendance\n" +
-                "WHERE NOT EXISTS(\n" +
-                "        SELECT id FROM attendance WHERE client_id = " + visitDate.getClientId() + " AND date = '" + visitDate.getDate() + "'\n" +
-                "    )\n" +
-                "LIMIT 1;";
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/fitness_club",
-                "postgres", "postgres");
-             PreparedStatement preparedSt = connection.prepareStatement(sql)) {
-            preparedSt.executeUpdate();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    //возвращает список посещений одного клиента по его id
-    public List<VisitDate> getListOfVisitsDates(int id) {
-        List<VisitDate> visitDates = new ArrayList<>();
-        String sql = "SELECT * FROM attendance WHERE client_id=" + id;
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                VisitDate visitDate = new VisitDate();
-                visitDate.setDate(resultSet.getDate("date"));
-                visitDate.setClientId(resultSet.getInt("client_id"));
-                visitDates.add(visitDate);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return visitDates;
-    }
-
-    //возвращает количество посещений клиента за год начиная с сегодняшнего дня по его id
-    public int getNumberOfVisitsDays(int id) {
-        int numberOfVisitsDays = 0;
-        String sql = "SELECT * FROM attendance WHERE client_id=" + id;
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                numberOfVisitsDays++;
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return numberOfVisitsDays;
-    }
 }
