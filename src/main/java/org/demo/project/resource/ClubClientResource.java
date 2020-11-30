@@ -30,8 +30,10 @@ public class ClubClientResource {
     public List<ClubClient> getListOfClientsByFIO(
             @QueryParam("lastname") String lastName,
             @QueryParam("firstname") String firstName,
-            @QueryParam("middlename") String middleName) {
-        return clubClientService.getListOfClientsByFIO(lastName, firstName, middleName);
+            @QueryParam("middlename") String middleName,
+            @QueryParam("phonenumber") String phoneNumber,
+            @QueryParam("email") String eMail) {
+        return clubClientService.getListOfClientsByFIO(lastName, firstName, middleName, phoneNumber, eMail);
     }
 
     //добавляет клиента

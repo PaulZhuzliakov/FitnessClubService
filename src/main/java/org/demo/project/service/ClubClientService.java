@@ -13,21 +13,22 @@ public class ClubClientService {
     @Inject
     ClubClientRepository clubClientRepository;
 
-    public List<ClubClient> getListOfClientsByFIO(String lastName, String firstName, String middleName) {
+    public List<ClubClient> getListOfClientsByFIO(String lastName, String firstName, String middleName,
+                                                  String phoneNumber, String eMail) {
         try {
-            return clubClientRepository.getListOfClientsByFIO(lastName, firstName, middleName);
+            return clubClientRepository.getListOfClientsByFIO(lastName, firstName, middleName, phoneNumber, eMail);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
     }
 
-//    public List<ClubClient> getListOfClientsByFI(String lastName, String firstName) {
-//        try {
-//            return clubClientRepository.getListOfClientsByFI(lastName, firstName);
-//        } catch (Exception e) {
-//            throw new RuntimeException("", e);
-//        }
-//    }
+    public List<ClubClient> getListOfClients() {
+        try {
+            return clubClientRepository.getListOfClients();
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
+    }
 
     public void createClient(ClubClient clubClient) {
         try {
@@ -45,13 +46,6 @@ public class ClubClientService {
         }
     }
 
-    public List<ClubClient> getListOfClients() {
-        try {
-            return clubClientRepository.getListOfClients();
-        } catch (Exception e) {
-            throw new RuntimeException("", e);
-        }
-    }
 
     public void updateClient(ClubClient clubClient, int id) {
         try {

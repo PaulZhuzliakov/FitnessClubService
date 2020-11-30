@@ -5,7 +5,9 @@ create table clients
     club_card_number serial not null,
     last_name varchar(32) not null,
     first_name varchar(32) not null,
-    middle_name varchar(32) not null
+    middle_name varchar(32) not null,
+    phone_number varchar(32) not null,
+    e_mail varchar(32) not null
 );
 
 create unique index clients_club_card_number_uindex
