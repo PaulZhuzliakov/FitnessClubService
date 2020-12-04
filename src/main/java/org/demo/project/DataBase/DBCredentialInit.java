@@ -1,11 +1,12 @@
 package org.demo.project.DataBase;
 
+import javax.enterprise.context.ApplicationScoped;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
+@ApplicationScoped
 public class DBCredentialInit {
-    public static String setProperties(String propertyKey) {
+    public static String getProperties(String propertyKey) {
         Properties prop = new Properties();
         String result = "";
         try (InputStream inputStream = DBCredentialInit.class

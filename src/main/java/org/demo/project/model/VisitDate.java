@@ -15,7 +15,6 @@ public class VisitDate {
     //задаёт текущую дату. для отметки посещения клиентом клуба
     public VisitDate(int clientId) {
         this.clientId = clientId;
-        this.date = new java.sql.Date(Calendar.getInstance().getTime().getTime());
     }
 
     public VisitDate(int clientId, Date date) {

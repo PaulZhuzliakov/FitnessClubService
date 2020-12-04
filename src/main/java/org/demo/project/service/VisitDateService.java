@@ -11,8 +11,6 @@ import java.util.List;
 @RequestScoped
 public class VisitDateService {
 
-
-
     @Inject
     VisitDateRepository visitDateRepository;
 

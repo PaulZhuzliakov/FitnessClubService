@@ -13,16 +13,16 @@ public class ClubClientService {
     @Inject
     ClubClientRepository clubClientRepository;
 
-    public List<ClubClient> getListOfClientsByFIO(String lastName, String firstName, String middleName,
-                                                  String phoneNumber, String eMail) {
+    public List<ClubClient> getListOfClientsByParams(String lastName, String firstName, String middleName,
+                                                     String phoneNumber, String eMail) {
         try {
-            return clubClientRepository.getListOfClientsByFIO(lastName, firstName, middleName, phoneNumber, eMail);
+            return clubClientRepository.getListOfClientsByParams(lastName, firstName, middleName, phoneNumber, eMail);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
     }
 
-    public List<ClubClient> getListOfClients() {
+    public List<ClubClient> getListOfAllClients() {
         try {
             return clubClientRepository.getListOfClients();
         } catch (Exception e) {

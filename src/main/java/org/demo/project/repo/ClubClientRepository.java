@@ -4,12 +4,9 @@ import org.demo.project.DataBase.DBCredentialInit;
 import org.demo.project.model.ClubClient;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @ApplicationScoped
 public class ClubClientRepository {
@@ -17,17 +14,16 @@ public class ClubClientRepository {
 //    String user = "postgres";
 //    String pass = "postgres";
 
-    String url = DBCredentialInit.setProperties("url");
-    String user = DBCredentialInit.setProperties("user");
-    String pass = DBCredentialInit.setProperties("pass");
+    String url = DBCredentialInit.getProperties("url");
+    String user = DBCredentialInit.getProperties("user");
+    String pass = DBCredentialInit.getProperties("pass");
 
     //возвращает список всех клиентов
     public List<ClubClient> getListOfClients() {
         List<ClubClient> clients = new ArrayList<>();
-        String sql = "SELECT * FROM clients";
         try (Connection connection = DriverManager.getConnection(url, user, pass);
              Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM clients");
             while (resultSet.next()) {
                 ClubClient client = new ClubClient();
                 client.setId(resultSet.getInt("id"));
@@ -35,8 +31,8 @@ public class ClubClientRepository {
                 client.setLastName(resultSet.getString("last_name"));
                 client.setFirstName(resultSet.getString("first_name"));
                 client.setMiddleName(resultSet.getString("middle_name"));
-                client.setPhoneNumber(resultSet.getString(6));
-                client.setMail(resultSet.getString(7));
+                client.setPhoneNumber(resultSet.getString("phone_number"));
+                client.setMail(resultSet.getString("e_mail"));
                 clients.add(client);
             }
         } catch (Exception e) {
@@ -45,85 +41,77 @@ public class ClubClientRepository {
         return clients;
     }
 
-    //возвращает список клиентов по ФИО
-    public List<ClubClient> getListOfClientsByFIO(String lastName, String firstName, String middleName,
-                                                  String phoneNumber, String eMail) {
-        List<ClubClient> clients = new ArrayList<>();
+    //возвращает список клиентов по параметрам
+    //для защиты от SQL инъекций пришлось сделать код создания SQL-запроса более громоздким. может вынести в класс?
+    //создание SQL запроса по любому количеству введенных параметров. например, только фамилия и телефон
+    public List<ClubClient> getListOfClientsByParams(String lastName, String firstName, String middleName,
+                                                     String phoneNumber, String eMail) {
 
-        StringBuffer sb = new StringBuffer();
-        boolean isFirst =true;
+        List<ClubClient> clients = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
         sb.append("SELECT * FROM clients WHERE ");
+        boolean isLastNameExists = false;
         if (!lastName.equals("")) {
-            sb.append("last_name = '" + lastName + "'");
+            isLastNameExists = true;
+            sb.append(" last_name = ?");
             isFirst = false;
         }
+        boolean isFirstNameExists = false;
         if (!firstName.equals("")) {
             if (!isFirst)
                 sb.append(" AND");
             isFirst = false;
-            sb.append(" first_name = '" + firstName + "'");
+            isFirstNameExists = true;
+            sb.append(" first_name = ?");
         }
+        boolean isMiddleNameExists = false;
         if (!middleName.equals("")) {
             if (!isFirst)
                 sb.append(" AND");
             isFirst = false;
-            sb.append(" middle_name = '" + middleName + "'");
+            isMiddleNameExists = true;
+            sb.append(" middle_name = ?");
         }
+        boolean isPhoneNumberExists = false;
         if (!phoneNumber.equals("")) {
             if (!isFirst)
                 sb.append(" AND");
             isFirst = false;
-            sb.append(" phone_number = '" + phoneNumber + "'");
+            isPhoneNumberExists = true;
+            sb.append(" phone_number = ?");
         }
+        boolean isEMailExists = false;
         if (!eMail.equals("")) {
             if (!isFirst)
                 sb.append(" AND");
             isFirst = false;
-            sb.append(" e_mail = '" + eMail + "'");
+            isEMailExists = true;
+            sb.append(" e_mail = ?");
         }
 
-//        StringBuffer sb = new StringBuffer();
-//        boolean isFirst =true;
-//        sb.append("SELECT * FROM clients WHERE ");
-//        if (!lastName.equals("")) {
-//            sb.append("last_name = '" + lastName + "'");
-//            isFirst = false;
-//        }
-//        if (!firstName.equals("")) {
-//            if (!isFirst)
-//                sb.append(" AND");
-//            isFirst = false;
-//            sb.append(" first_name = '" + firstName + "'");
-//        }
-//        if (!middleName.equals("")) {
-//            if (!isFirst)
-//                sb.append(" AND");
-//            isFirst = false;
-//            sb.append(" middle_name = '" + middleName + "'");
-//        }
-//        if (!phoneNumber.equals("")) {
-//            if (!isFirst)
-//                sb.append(" AND");
-//            isFirst = false;
-//            sb.append(" phone_number = '" + phoneNumber + "'");
-//        }
-//        if (!eMail.equals("")) {
-//            if (!isFirst)
-//                sb.append(" AND");
-//            isFirst = false;
-//            sb.append(" e_mail = '" + eMail + "'");
-//        }
-
-        String sql =sb.toString();
-        System.out.println(sql);
-
-        String sql1 = "SELECT * FROM clients WHERE last_name = '" + lastName + "'"
-                + " AND first_name = '" + firstName + "'"
-                + " AND middle_name = '" + middleName + "'";
+        String sql = sb.toString();
 
         try (Connection connection = DriverManager.getConnection(url, user, pass);
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            int paramIndex = 0;
+            if (isLastNameExists) {
+                preparedStatement.setString(++paramIndex, lastName);
+            }
+            if (isFirstNameExists) {
+            preparedStatement.setString(++paramIndex, firstName);
+            }
+            if (isMiddleNameExists) {
+            preparedStatement.setString(++paramIndex, middleName);
+            }
+            if (isPhoneNumberExists) {
+            preparedStatement.setString(++paramIndex, phoneNumber);
+            }
+            if (isEMailExists) {
+            preparedStatement.setString(++paramIndex, eMail);
+            }
+
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 ClubClient client = new ClubClient();
                 client.setId(resultSet.getInt("id"));
@@ -131,7 +119,6 @@ public class ClubClientRepository {
                 client.setLastName(resultSet.getString("last_name"));
                 client.setFirstName(resultSet.getString("first_name"));
                 client.setMiddleName(resultSet.getString("middle_name"));
-
                 client.setPhoneNumber(resultSet.getString("phone_number"));
                 client.setMail(resultSet.getString("e_mail"));
                 clients.add(client);

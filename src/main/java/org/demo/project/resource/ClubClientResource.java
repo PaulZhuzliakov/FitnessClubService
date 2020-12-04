@@ -4,12 +4,13 @@ import org.demo.project.model.ClubClient;
 import org.demo.project.service.ClubClientService;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
-@ApplicationScoped
+@RequestScoped
 @Path("/clients")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -20,20 +21,20 @@ public class ClubClientResource {
 
     //возвращает список всех клиентов
     @GET
-    public List<ClubClient> getListOfClients() {
-        return clubClientService.getListOfClients();
+    public List<ClubClient> getListOfAllClients() {
+        return clubClientService.getListOfAllClients();
     }
 
-    //возвращает список клиентов по ФИО
+    //возвращает список клиентов по введённым в клиенте параметрам
     @GET
-    @Path("/get-by-fio")
-    public List<ClubClient> getListOfClientsByFIO(
+    @Path("/search-clients")
+    public List<ClubClient> getListOfClientsByParams(
             @QueryParam("lastname") String lastName,
             @QueryParam("firstname") String firstName,
             @QueryParam("middlename") String middleName,
             @QueryParam("phonenumber") String phoneNumber,
             @QueryParam("email") String eMail) {
-        return clubClientService.getListOfClientsByFIO(lastName, firstName, middleName, phoneNumber, eMail);
+        return clubClientService.getListOfClientsByParams(lastName, firstName, middleName, phoneNumber, eMail);
     }
 
     //добавляет клиента
@@ -42,17 +43,17 @@ public class ClubClientResource {
         clubClientService.createClient(clubClient);
     }
 
-    //редактирует клиента
+    //редактирует клиента по его id
     @PUT
     @Path("/{id}")
-    public void updateClient(ClubClient clubClient, @PathParam("id") Integer id) {
-        clubClientService.updateClient(clubClient, id);
+    public void updateClient(ClubClient clubClient, @PathParam("id") int clientId) {
+        clubClientService.updateClient(clubClient, clientId);
     }
 
-    //удаление клиента
+    //удаляет клиента по его id
     @DELETE
     @Path("/{id}")
-    public void deleteClientById(@PathParam("id") Integer clientId) {
+    public void deleteClientById(@PathParam("id") int clientId) {
         clubClientService.deleteClientById(clientId);
     }
 

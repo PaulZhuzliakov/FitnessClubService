@@ -6,29 +6,36 @@ import org.demo.project.model.VisitDate;
 import javax.enterprise.context.ApplicationScoped;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @ApplicationScoped
 public class VisitDateRepository {
-//    final String url = "jdbc:postgresql://localhost:5432/fitness_club";
-//    final String user = "postgres";
-//    final String pass = "postgres";
 
-    String url = DBCredentialInit.setProperties("url");
-    String user = DBCredentialInit.setProperties("user");
-    String pass = DBCredentialInit.setProperties("pass");
+    String url = DBCredentialInit.getProperties("url");
+    String user = DBCredentialInit.getProperties("user");
+    String pass = DBCredentialInit.getProperties("pass");
 
     //добавляет в таблицу посещаемости дату сегодняшнего посещения
     public void confirmClientVisit(VisitDate visitDate) {
-
-        String sql = "INSERT INTO attendance (date, client_id)\n" +
-                "SELECT '" + visitDate.getDate() + "' AS date, " + visitDate.getClientId() + " AS client_id FROM attendance\n" +
-                "WHERE NOT EXISTS(\n" +
-                "        SELECT id FROM attendance WHERE client_id = " + visitDate.getClientId() + " AND date = '" + visitDate.getDate() + "'\n" +
-                "    )\n" +
-                "LIMIT 1;";
+        //переписать полученте даты
+        java.sql.Date currentDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
+        int clientId = visitDate.getClientId();
         try (Connection connection = DriverManager.getConnection(url, user, pass);
-             PreparedStatement preparedSt = connection.prepareStatement(sql)) {
+             PreparedStatement preparedSt = connection.prepareStatement(
+                     new StringBuilder()
+                     .append("INSERT INTO attendance (date, client_id)\n")
+                     .append("SELECT ? AS date, ? AS client_id FROM attendance\n")
+                     .append("WHERE NOT EXISTS(\n")
+                     .append("SELECT id FROM attendance WHERE client_id = ? AND date = ?\n")
+                     .append("    )\n")
+                     .append("LIMIT 1;")
+                     .toString()
+             )) {
+            preparedSt.setDate(1, currentDate);
+            preparedSt.setInt(2, clientId);
+            preparedSt.setInt(3, clientId);
+            preparedSt.setDate(4, currentDate);
             preparedSt.executeUpdate();
         } catch (Exception e) {
             System.out.println(e);
@@ -38,10 +45,10 @@ public class VisitDateRepository {
     //возвращает список посещений одного клиента по его id
     public List<VisitDate> getListOfVisitsDates(int id) {
         List<VisitDate> visitDates = new ArrayList<>();
-        String sql = "SELECT * FROM attendance WHERE client_id=" + id;
         try (Connection connection = DriverManager.getConnection(url, user, pass);
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM attendance WHERE client_id=?")) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 VisitDate visitDate = new VisitDate();
                 visitDate.setDate(resultSet.getDate("date"));
@@ -57,10 +64,14 @@ public class VisitDateRepository {
     //возвращает количество посещений клиента за год начиная с сегодняшнего дня по его id
     public int getNumberOfVisitsDays(int id) {
         int numberOfVisitsDays = 0;
-        String sql = "SELECT * FROM attendance WHERE client_id=" + id;
+//        String sql = new StringBuilder()
+//                .append("SELECT * FROM attendance WHERE client_id=")
+//                .append(id)
+//                .toString();
         try (Connection connection = DriverManager.getConnection(url, user, pass);
-             Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(sql);
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM attendance WHERE client_id=?")) {
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 numberOfVisitsDays++;
             }
