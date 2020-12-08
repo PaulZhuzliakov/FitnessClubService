@@ -22,7 +22,7 @@ public class TestRepository {
 
         java.sql.Date setDate = new java.sql.Date(new java.util.Date().getTime());
         for (int i = 0; i < days; i++, setDate = new java.sql.Date(setDate.getTime() - 24 * 60 * 60 * 1000)) {
-            String sql = new StringBuilder().append("INSERT INTO attendance (date, client_id)\n")
+            String sql = new StringBuilder("INSERT INTO attendance (date, client_id)\n")
                     .append("SELECT '").append(setDate).append("' AS date, ").append(id).append(" AS client_id FROM attendance\n")
                     .append("WHERE NOT EXISTS(\n")
                     .append("SELECT id FROM attendance WHERE client_id = ").append(id).append(" AND date = '").append(setDate).append("'\n")
