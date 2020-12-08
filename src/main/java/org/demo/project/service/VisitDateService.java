@@ -1,7 +1,6 @@
 package org.demo.project.service;
 
 import org.demo.project.model.VisitDate;
-import org.demo.project.repo.ClubClientRepository;
 import org.demo.project.repo.VisitDateRepository;
 
 import javax.enterprise.context.RequestScoped;
@@ -12,11 +11,11 @@ import java.util.List;
 public class VisitDateService {
 
     @Inject
-    VisitDateRepository visitDateRepository;
+    VisitDateRepository getNumberOfVisitsInLastDays;
 
     public void confirmClientVisit(VisitDate visitDate) {
         try {
-            visitDateRepository.confirmClientVisit(visitDate);
+            getNumberOfVisitsInLastDays.confirmClientVisit(visitDate);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
@@ -24,15 +23,15 @@ public class VisitDateService {
 
     public List<VisitDate> getListOfVisitsDates(int id) {
         try {
-            return visitDateRepository.getListOfVisitsDates(id);
+            return getNumberOfVisitsInLastDays.getListOfVisitsDates(id);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
     }
 
-    public int getNumberOfVisitsDays(int id) {
+    public int getNumberOfVisitsInLastDays(int clientId, int days) {
         try {
-            return visitDateRepository.getNumberOfVisitsDays(id);
+            return getNumberOfVisitsInLastDays.getNumberOfVisitsDays(clientId, days);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }

@@ -3,7 +3,6 @@ package org.demo.project.resource;
 import org.demo.project.model.ClubClient;
 import org.demo.project.service.ClubClientService;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;

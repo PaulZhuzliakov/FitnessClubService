@@ -38,7 +38,7 @@ public class ClubClientService {
         }
     }
 
-    public void deleteClientById(Integer clientId) {
+    public void deleteClientById(int clientId) {
         try {
             clubClientRepository.deleteClientById(clientId);
         } catch (Exception e) {

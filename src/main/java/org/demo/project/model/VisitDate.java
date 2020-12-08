@@ -1,10 +1,7 @@
 package org.demo.project.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Date;
-import java.util.Calendar;
 
-@XmlRootElement
 public class VisitDate {
     int clientId;
     Date date;

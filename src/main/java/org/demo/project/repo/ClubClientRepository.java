@@ -1,40 +1,28 @@
 package org.demo.project.repo;
 
-import org.demo.project.DataBase.DBCredentialInit;
+import org.demo.project.DataBase.DBUtils;
 import org.demo.project.model.ClubClient;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@ApplicationScoped
+@RequestScoped
 public class ClubClientRepository {
-//    String url = "jdbc:postgresql://localhost:5432/fitness_club";
-//    String user = "postgres";
-//    String pass = "postgres";
 
-    String url = DBCredentialInit.getProperties("url");
-    String user = DBCredentialInit.getProperties("user");
-    String pass = DBCredentialInit.getProperties("pass");
+    @Inject
+    DBUtils dbUtils;
 
     //возвращает список всех клиентов
     public List<ClubClient> getListOfClients() {
         List<ClubClient> clients = new ArrayList<>();
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
+        String sql = "SELECT * FROM clients";
+        try (Connection connection = dbUtils.connect();
              Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM clients");
-            while (resultSet.next()) {
-                ClubClient client = new ClubClient();
-                client.setId(resultSet.getInt("id"));
-                client.setClubCardNumber(resultSet.getInt("club_card_number"));
-                client.setLastName(resultSet.getString("last_name"));
-                client.setFirstName(resultSet.getString("first_name"));
-                client.setMiddleName(resultSet.getString("middle_name"));
-                client.setPhoneNumber(resultSet.getString("phone_number"));
-                client.setMail(resultSet.getString("e_mail"));
-                clients.add(client);
-            }
+            ResultSet resultSet = statement.executeQuery(sql);
+            fillListOfClientsWithResultSet(clients, resultSet);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -42,8 +30,8 @@ public class ClubClientRepository {
     }
 
     //возвращает список клиентов по параметрам
-    //для защиты от SQL инъекций пришлось сделать код создания SQL-запроса более громоздким. может вынести в класс?
-    //создание SQL запроса по любому количеству введенных параметров. например, только фамилия и телефон
+    //создание SQL запроса по любому количеству любых введенных параметров. например, только отчество и телефон
+    //для защиты от SQL инъекций, пришлось сделать код создания SQL-запроса более громоздким.
     public List<ClubClient> getListOfClientsByParams(String lastName, String firstName, String middleName,
                                                      String phoneNumber, String eMail) {
 
@@ -89,51 +77,54 @@ public class ClubClientRepository {
             isEMailExists = true;
             sb.append(" e_mail = ?");
         }
-
         String sql = sb.toString();
 
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
+        try (Connection connection = dbUtils.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             int paramIndex = 0;
             if (isLastNameExists) {
                 preparedStatement.setString(++paramIndex, lastName);
             }
             if (isFirstNameExists) {
-            preparedStatement.setString(++paramIndex, firstName);
+                preparedStatement.setString(++paramIndex, firstName);
             }
             if (isMiddleNameExists) {
-            preparedStatement.setString(++paramIndex, middleName);
+                preparedStatement.setString(++paramIndex, middleName);
             }
             if (isPhoneNumberExists) {
-            preparedStatement.setString(++paramIndex, phoneNumber);
+                preparedStatement.setString(++paramIndex, phoneNumber);
             }
             if (isEMailExists) {
-            preparedStatement.setString(++paramIndex, eMail);
+                preparedStatement.setString(++paramIndex, eMail);
             }
-
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                ClubClient client = new ClubClient();
-                client.setId(resultSet.getInt("id"));
-                client.setClubCardNumber(resultSet.getInt("club_card_number"));
-                client.setLastName(resultSet.getString("last_name"));
-                client.setFirstName(resultSet.getString("first_name"));
-                client.setMiddleName(resultSet.getString("middle_name"));
-                client.setPhoneNumber(resultSet.getString("phone_number"));
-                client.setMail(resultSet.getString("e_mail"));
-                clients.add(client);
-            }
+            fillListOfClientsWithResultSet(clients, resultSet);
         } catch (Exception e) {
             System.out.println(e);
         }
         return clients;
     }
 
+    //вспомогательный метод для GET запросов. Заполняет список клиентов данными из ResultSet
+    private void fillListOfClientsWithResultSet(List<ClubClient> clients, ResultSet resultSet) throws SQLException {
+        while (resultSet.next()) {
+            ClubClient client = new ClubClient();
+            client.setId(resultSet.getInt("id"));
+            client.setClubCardNumber(resultSet.getInt("club_card_number"));
+            client.setLastName(resultSet.getString("last_name"));
+            client.setFirstName(resultSet.getString("first_name"));
+            client.setMiddleName(resultSet.getString("middle_name"));
+            client.setPhoneNumber(resultSet.getString("phone_number"));
+            client.setMail(resultSet.getString("e_mail"));
+            clients.add(client);
+        }
+    }
+
     //добавляет клиента
     public void createClient(ClubClient clubClient) {
         String sql = "INSERT INTO clients (last_name, first_name, middle_name, phone_number, e_mail)" +
                 " VALUES (?, ?, ?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
+        try (Connection connection = dbUtils.connect();
              PreparedStatement preparedSt = connection.prepareStatement(sql)) {
             preparedSt.setString(1, clubClient.getLastName());
             preparedSt.setString(2, clubClient.getFirstName());
@@ -146,10 +137,11 @@ public class ClubClientRepository {
         }
     }
 
+
     //редактирует клиента
     public void updateClient(ClubClient clubClient, int id) {
         String sql = "UPDATE clients SET last_name=?, first_name=?, middle_name=?, phone_number=?, e_mail=? WHERE id=?";
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
+        try (Connection connection = dbUtils.connect();
              PreparedStatement preparedSt = connection.prepareStatement(sql)) {
             preparedSt.setString(1, clubClient.getLastName());
             preparedSt.setString(2, clubClient.getFirstName());
@@ -164,10 +156,10 @@ public class ClubClientRepository {
     }
 
     //удаляет клиента по id
-    public void deleteClientById(Integer clientId) {
+    public void deleteClientById(int clientId) {
         String sql = "DELETE FROM clients WHERE id=?";
-        try (Connection connection = DriverManager.getConnection(url, user, pass);
-             PreparedStatement preparedSt = connection.prepareStatement(sql);) {
+        try (Connection connection = dbUtils.connect();
+             PreparedStatement preparedSt = connection.prepareStatement(sql)) {
             preparedSt.setInt(1, clientId);
             preparedSt.executeUpdate();
         } catch (Exception e) {

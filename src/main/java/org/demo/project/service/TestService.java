@@ -8,9 +8,11 @@ import javax.inject.Inject;
 @RequestScoped
 public class TestService {
 
-    TestRepository testRepository = new TestRepository();
+    @Inject
+    TestRepository testRepository;
 
-    public void addVisits(Integer id, Integer days) {
+
+    public void addVisits(int id, int days) {
         try {
             testRepository.addVisits(id, days);
         } catch (Exception e) {
