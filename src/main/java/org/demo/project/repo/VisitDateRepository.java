@@ -72,6 +72,7 @@ public class VisitDateRepository {
         try (Connection connection = dbUtils.connect();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, clientId);
+//            preparedStatement.setInt(2, days);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             numberOfVisitsDays = resultSet.getInt(1);

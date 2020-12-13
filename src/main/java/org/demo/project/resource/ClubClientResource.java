@@ -18,22 +18,22 @@ public class ClubClientResource {
     @Inject
     ClubClientService clubClientService;
 
-    //возвращает список всех клиентов
+    //возвращает список всех клиентов, если вызов без параметров
+    //или список клиентов по введённым в клиенте параметрам
     @GET
-    public List<ClubClient> getListOfAllClients() {
-        return clubClientService.getListOfAllClients();
-    }
-
-    //возвращает список клиентов по введённым в клиенте параметрам
-    @GET
-    @Path("/search-clients")
-    public List<ClubClient> getListOfClientsByParams(
+    public List<ClubClient> getListOfClients(
             @QueryParam("lastname") String lastName,
             @QueryParam("firstname") String firstName,
             @QueryParam("middlename") String middleName,
             @QueryParam("phonenumber") String phoneNumber,
             @QueryParam("email") String eMail) {
-        return clubClientService.getListOfClientsByParams(lastName, firstName, middleName, phoneNumber, eMail);
+        //если был вызван метод без параметров, то возвращается список всех клиентов.
+        //Достаточно проверки одного параметра на null. == null, а не .equals(null)
+        if (lastName == null) {
+            return clubClientService.getListOfAllClients();
+        } else {
+            return clubClientService.getListOfClientsByParams(lastName, firstName, middleName, phoneNumber, eMail);
+        }
     }
 
     //добавляет клиента
