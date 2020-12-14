@@ -50,7 +50,7 @@ public class VisitDateRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 VisitDate visitDate = new VisitDate();
-                visitDate.setDate(resultSet.getDate("date"));
+                visitDate.setDate(resultSet.getDate("date").toLocalDate());
                 visitDate.setClientId(resultSet.getInt("client_id"));
                 visitDates.add(visitDate);
             }
@@ -81,6 +81,5 @@ public class VisitDateRepository {
         }
         return numberOfVisitsDays;
     }
-
 
 }

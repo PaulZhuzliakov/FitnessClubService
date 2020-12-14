@@ -18,4 +18,5 @@ dependencies {
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.8'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.4'
 
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.9'
 }
