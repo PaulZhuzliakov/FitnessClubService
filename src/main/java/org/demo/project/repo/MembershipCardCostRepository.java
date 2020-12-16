@@ -1,5 +1,6 @@
 package org.demo.project.repo;
 
+import org.demo.project.ConfigInit;
 import org.demo.project.DataBase.DBUtils;
 import org.demo.project.model.MembershipCardCost;
 
@@ -17,11 +18,11 @@ public class MembershipCardCostRepository {
 
     public MembershipCardCost getMembershipCardCost(int clientId) {
         MembershipCardCost cardCost = new MembershipCardCost();
-        //сделать из конфигов
-        int periodOfTimeInDays = 365;
+        int periodOfTimeInDays = ConfigInit.periodOfTimeInDays;
+        int membershipCardCostWithoutDiscount = ConfigInit.membershipCardCostWithoutDiscount;
         int daysVisitedInPeriodOfTime = getNumberOfVisitedDaysInPeriodOfTime(clientId, periodOfTimeInDays);
         float percentageOfVisitedDaysInPeriodOfTime = (float) daysVisitedInPeriodOfTime / periodOfTimeInDays * 100;
-        int membershipCardCostWithoutDiscount = 20000;
+
         int membershipCardCostWithDiscount;
         int discount;
         cardCost.setPeriodOfTimeInDays(periodOfTimeInDays);

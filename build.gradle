@@ -17,6 +17,6 @@ dependencies {
     implementation group: 'javax.enterprise', name: 'cdi-api', version: '1.2'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.8'
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.4'
-
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.9'
+    implementation group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.25.1'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.9'
 }

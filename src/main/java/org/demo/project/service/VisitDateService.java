@@ -29,12 +29,4 @@ public class VisitDateService {
         }
     }
 
-//    public int getNumberOfVisitsInLastDays(int clientId, int days) {
-//        try {
-//            return getNumberOfVisitsInLastDays.getNumberOfVisitsDays(clientId, days);
-//        } catch (Exception e) {
-//            throw new RuntimeException("", e);
-//        }
-//    }
-
 }

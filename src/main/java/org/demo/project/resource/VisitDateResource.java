@@ -31,18 +31,4 @@ public class VisitDateResource {
         return visitDateService.getListOfVisitsDates(id);
     }
 
-//    //получить количество посещений клиента за последние несколько дней по сегодняшниий день
-//    @GET
-//    @Path("/quantity-visited-days")
-//    public int getNumberOfVisitsInLastDays(@QueryParam("id") int clientId,
-//                                           @QueryParam("days") int days) {
-//        return visitDateService.getNumberOfVisitsInLastDays(clientId, days);
-//    }
-
-//    @GET
-//    @Path("/quantity-visited-days/")
-//    public int getNumberOfVisitsDays(@QueryParam("Clientid") int Clientid) {
-//        return visitDateService.getNumberOfVisitsDays(Clientid);
-//    }
-
 }

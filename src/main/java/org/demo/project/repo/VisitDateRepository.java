@@ -60,26 +60,4 @@ public class VisitDateRepository {
         return visitDates;
     }
 
-    //возвращает количество посещений клиента по его id за год
-    // начиная с сегодняшнего дня за заданное количество дней
-//    public int getNumberOfVisitsDays(int clientId, int days) {
-//        int numberOfVisitsDays = 0;
-//        String sql = new StringBuilder().append("SELECT COUNT(attendance.date ) \n")
-//                .append("FROM attendance\n")
-//                .append("WHERE client_id = ?")
-//                .append(" AND attendance.date > NOW() - INTERVAL '").append(days).append(" DAYS'")
-//                .toString();
-//        try (Connection connection = dbUtils.connect();
-//             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-//            preparedStatement.setInt(1, clientId);
-////            preparedStatement.setInt(2, days);
-//            ResultSet resultSet = preparedStatement.executeQuery();
-//            resultSet.next();
-//            numberOfVisitsDays = resultSet.getInt(1);
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        }
-//        return numberOfVisitsDays;
-//    }
-
 }
