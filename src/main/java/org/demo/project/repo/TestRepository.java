@@ -18,7 +18,7 @@ public class TestRepository {
     @Inject
     DBUtils dbUtils;
 
-    public void addVisits(Integer id, int days) {
+    public void addVisits(int id, int days) {
 
         java.sql.Date setDate = new java.sql.Date(new java.util.Date().getTime());
         for (int i = 0; i < days; i++, setDate = new java.sql.Date(setDate.getTime() - 24 * 60 * 60 * 1000)) {
