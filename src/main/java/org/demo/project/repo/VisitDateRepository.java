@@ -1,10 +1,141 @@
+//package org.demo.project.repo;
+//
+//import com.fasterxml.jackson.databind.BeanProperty;
+//import com.fasterxml.jackson.databind.deser.impl.BeanPropertyMap;
+//import org.demo.project.ConfigInit;
+//import org.demo.project.DataBase.DBUtils;
+//import org.demo.project.model.VisitDate;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.jdbc.DataSourceBuilder;
+//import org.springframework.jdbc.core.BeanPropertyRowMapper;
+//import org.springframework.jdbc.core.JdbcTemplate;
+//import org.springframework.jdbc.datasource.embedded.DataSourceFactory;
+//
+//import javax.enterprise.context.RequestScoped;
+//import javax.inject.Inject;
+//import javax.sql.DataSource;
+//import java.sql.*;
+//import java.time.LocalDate;
+//import java.util.ArrayList;
+//import java.util.HashMap;
+//import java.util.List;
+//import java.util.Map;
+//
+//@RequestScoped
+//public class VisitDateRepository {
+//
+//    @Inject
+//    DBUtils dbUtils;
+//
+//    @Inject
+//    ConfigInit configInit;
+//
+//
+////    @Autowired
+////    JdbcTemplate jdbcTemplate;
+//
+////    static void jdbcTemplateExample() {
+////        DataSource ds = DataSourceBuilder
+////                .create()
+////                .username(System.getProperty("user"))
+////                .password(System.getProperty("pass"))
+////                .url(System.getProperty("url"))
+////                .build();
+////
+////        JdbcTemplate jt = new JdbcTemplate(ds);
+////        String sql = "SELECT * FROM attendance WHERE client_id=?";
+////
+////        List<Object> results = jt.query(sql, (ResultSet rs, int rowNum) -> {
+////
+////            Map results = new HashMap<>();
+////            ResultSetMetaData md = rs.getMetaData();
+////            int columns = md.getColumnCount();
+////            for (int i = 1; i <= columns; ++i) {
+////                results.put(md.getColumnName(i), rs.getObject(i));
+////            }
+////            return results;
+////        });
+////
+////        //use the results
+////    }
+//
+////    public List<VisitDate> getListOfVisitsDates(int id) {
+////                DataSource ds = DataSourceBuilder
+////                .create()
+////                .username("postgres")
+////                .password("postgres")
+////                .url("jdbc:postgresql://localhost:5432/fitness_club")
+////                .build();
+////                DataSource ds = dbUtils.getDs();
+////        JdbcTemplate jdbcTemplate = new JdbcTemplate(dbUtils.getDs());
+////        String sql = "SELECT * FROM attendance WHERE client_id=3";
+////        return jdbcTemplate.query(sql, (rs, rowNum) ->
+////                        new VisitDate(
+////                                rs.getInt("client_id"),
+////                                rs.getDate("date").toLocalDate()
+////                        )
+////        );
+////    }
+//
+//    //возвращает список посещений одного клиента по его id
+//    public List<VisitDate> getListOfVisitsDates(int id) {
+//        List<VisitDate> visitDates = new ArrayList<>();
+//
+//        try (Connection connection = dbUtils.connect();
+//             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+//            preparedStatement.setInt(1, id);
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//            while (resultSet.next()) {
+//                VisitDate visitDate = new VisitDate();
+//                visitDate.setDate(resultSet.getDate("date").toLocalDate());
+//                visitDate.setClientId(resultSet.getInt("client_id"));
+//                visitDates.add(visitDate);
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//        return visitDates;
+//    }
+//
+//    //добавляет в таблицу посещаемости дату сегодняшнего посещения
+//    public void confirmClientVisit(VisitDate visitDate) {
+//        Date currentDate = Date.valueOf(LocalDate.now());
+//        int clientId = visitDate.getClientId();
+//        String sql = new StringBuilder()
+//                .append("INSERT INTO attendance (date, client_id)\n")
+//                .append("SELECT ? AS date, ? AS client_id FROM attendance\n")
+//                .append("WHERE NOT EXISTS(\n")
+//                .append("SELECT id FROM attendance WHERE client_id = ? AND date = ?\n")
+//                .append("    )\n")
+//                .append("LIMIT 1;")
+//                .toString();
+//        try (Connection connection = dbUtils.connect();
+//             PreparedStatement preparedSt = connection.prepareStatement(sql)) {
+//            preparedSt.setDate(1, currentDate);
+//            preparedSt.setInt(2, clientId);
+//            preparedSt.setInt(3, clientId);
+//            preparedSt.setDate(4, currentDate);
+//            preparedSt.executeUpdate();
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//    }
+//
+//}
+
 package org.demo.project.repo;
 
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.deser.impl.BeanPropertyMap;
 import org.demo.project.DataBase.DBUtils;
 import org.demo.project.model.VisitDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.sql.DataSource;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -40,24 +171,41 @@ public class VisitDateRepository {
         }
     }
 
+
+    //Эксперимент со Spring JDBC
+
     //возвращает список посещений одного клиента по его id
     public List<VisitDate> getListOfVisitsDates(int id) {
-        List<VisitDate> visitDates = new ArrayList<>();
-        String sql = "SELECT * FROM attendance WHERE client_id=?";
-        try (Connection connection = dbUtils.connect();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                VisitDate visitDate = new VisitDate();
-                visitDate.setDate(resultSet.getDate("date").toLocalDate());
-                visitDate.setClientId(resultSet.getInt("client_id"));
-                visitDates.add(visitDate);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-        return visitDates;
+        String sql = new StringBuilder("SELECT * FROM attendance WHERE client_id=").append(id).toString();
+        DataSource dataSource = dbUtils.getDataSource();
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                new VisitDate(
+                        rs.getInt("client_id"),
+                        rs.getDate("date").toLocalDate()
+                )
+        );
     }
+
+
+//    //возвращает список посещений одного клиента по его id
+//    public List<VisitDate> getListOfVisitsDates(int id) {
+//        List<VisitDate> visitDates = new ArrayList<>();
+//        String sql = "SELECT * FROM attendance WHERE client_id=?";
+//        try (Connection connection = dbUtils.connect();
+//             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+//            preparedStatement.setInt(1, id);
+//            ResultSet resultSet = preparedStatement.executeQuery();
+//            while (resultSet.next()) {
+//                VisitDate visitDate = new VisitDate();
+//                visitDate.setDate(resultSet.getDate("date").toLocalDate());
+//                visitDate.setClientId(resultSet.getInt("client_id"));
+//                visitDates.add(visitDate);
+//            }
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//        return visitDates;
+//    }
 
 }

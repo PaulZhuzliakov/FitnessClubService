@@ -11,6 +11,10 @@ import java.time.LocalDate;
 
 public class VisitDate {
     int clientId;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
     LocalDate date;
 
     public VisitDate() {
@@ -28,14 +32,10 @@ public class VisitDate {
         this.clientId = clientId;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getDate() {
         return date;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     public void setDate(LocalDate date) {
         this.date = date;
     }

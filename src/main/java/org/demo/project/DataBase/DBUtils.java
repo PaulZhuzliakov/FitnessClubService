@@ -1,6 +1,9 @@
 package org.demo.project.DataBase;
 
+import org.springframework.boot.jdbc.DataSourceBuilder;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.sql.DataSource;
 import java.sql.*;
 
 @ApplicationScoped
@@ -20,4 +23,14 @@ public class DBUtils {
         }
         return connection;
     }
+
+    public DataSource getDataSource() {
+        return DataSourceBuilder
+                .create()
+                .username(user)
+                .password(pass)
+                .url(url)
+                .build();
+    }
+
 }
