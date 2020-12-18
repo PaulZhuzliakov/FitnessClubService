@@ -28,7 +28,7 @@ public class ClubClientResource {
             @QueryParam("phonenumber") String phoneNumber,
             @QueryParam("email") String eMail) {
         //если был вызван метод без параметров, то возвращается список всех клиентов.
-        //Достаточно проверки одного параметра на null. == null, а не .equals(null)
+        //Достаточно проверки одного параметра на null
         if (lastName == null) {
             return clubClientService.getListOfAllClients();
         } else {
