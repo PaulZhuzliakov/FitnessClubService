@@ -17,9 +17,9 @@ public class MembershipCardCostResource {
     MembershipCardCostService membershipCardCostService;
 
     @GET
-    @Path("/{id}")
+    @Path("/{clientId}")
     public MembershipCardCost getMembershipCardCost(
-            @PathParam("id") int clientId) {
+            @PathParam("clientId") int clientId) {
             return membershipCardCostService.getMembershipCardCost(clientId);
     }
 

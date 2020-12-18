@@ -26,9 +26,9 @@ public class VisitDateResource {
 
     //получить список посещений одного клиента по его id
     @GET
-    @Path("/{id}")
-    public List<VisitDate> getListOfVisitsDates(@PathParam("id") int id) {
-        return visitDateService.getListOfVisitsDates(id);
+    @Path("/{clientId}")
+    public List<VisitDate> getListOfVisitsDates(@PathParam("clientId") int clientId) {
+        return visitDateService.getListOfVisitsDates(clientId);
     }
 
 }

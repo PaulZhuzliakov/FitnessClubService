@@ -21,9 +21,9 @@ public class VisitDateService {
         }
     }
 
-    public List<VisitDate> getListOfVisitsDates(int id) {
+    public List<VisitDate> getListOfVisitsDates(int clientId) {
         try {
-            return getNumberOfVisitsInLastDays.getListOfVisitsDates(id);
+            return getNumberOfVisitsInLastDays.getListOfVisitsDates(clientId);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }
