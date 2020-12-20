@@ -1,6 +1,7 @@
 package org.demo.project.DataBase;
 
 import org.demo.project.model.ClubClient;
+import org.demo.project.model.VisitDate;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.sql.*;
@@ -29,13 +30,39 @@ public class DBUtils {
             String sql, Function<ResultSet, ClubClient> mapper) throws SQLException {
 
         try(Connection connection = connect();
-            PreparedStatement statement = connection.prepareStatement(sql)) {
-            ResultSet rs = statement.executeQuery();
+            PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
             List<ClubClient> result = new ArrayList<>();
             while(rs.next()) {
                 result.add(mapper.apply(rs));
             }
             return result;
+        }
+    }
+
+    public List<VisitDate> selectV(
+            String sql, Function<ResultSet, VisitDate> mapper) throws SQLException {
+
+        try(Connection connection = connect();
+            PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            List<VisitDate> result = new ArrayList<>();
+            while(rs.next()) {
+                result.add(mapper.apply(rs));
+            }
+            return result;
+        }
+    }
+
+
+
+    //удаление и не только
+    public void insert(String sql, int clientId) throws SQLException {
+
+        try(Connection connection = connect();
+            PreparedStatement preparedSt = connection.prepareStatement(sql)) {
+            preparedSt.setInt(1, clientId);
+            preparedSt.executeUpdate();
         }
     }
 

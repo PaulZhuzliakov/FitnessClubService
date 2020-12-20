@@ -42,6 +42,12 @@ public class ClubClientRepository {
         return client;
     }
 
+    //удаляет клиента по id
+    public void deleteClientById(int clientId) throws SQLException {
+        String sql = "DELETE FROM clients WHERE id=?";
+        dbUtils.insert(sql, clientId);
+    }
+
 
 
     //возвращает список клиентов по параметрам
@@ -170,17 +176,17 @@ public class ClubClientRepository {
         }
     }
 
-    //удаляет клиента по id
-    public void deleteClientById(int clientId) {
-        String sql = "DELETE FROM clients WHERE id=?";
-        try (Connection connection = dbUtils.connect();
-             PreparedStatement preparedSt = connection.prepareStatement(sql)) {
-            preparedSt.setInt(1, clientId);
-            preparedSt.executeUpdate();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
+//    //удаляет клиента по id
+//    public void deleteClientById(int clientId) {
+//        String sql = "DELETE FROM clients WHERE id=?";
+//        try (Connection connection = dbUtils.connect();
+//             PreparedStatement preparedSt = connection.prepareStatement(sql)) {
+//            preparedSt.setInt(1, clientId);
+//            preparedSt.executeUpdate();
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
+//    }
 
 }
 
