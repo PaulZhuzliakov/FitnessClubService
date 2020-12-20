@@ -41,23 +41,6 @@ public class VisitDateRepository {
         }
     }
 
-
-//    //Эксперимент со Spring JDBC
-//
-//    //возвращает список посещений одного клиента по его id
-//    public List<VisitDate> getListOfVisitsDates(int id) {
-//        String sql = new StringBuilder("SELECT * FROM attendance WHERE client_id=").append(id).toString();
-//        DataSource dataSource = dbUtils.getDataSource();
-//        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-//        return jdbcTemplate.query(sql, (rs, rowNum) ->
-//                new VisitDate(
-//                        rs.getInt("client_id"),
-//                        rs.getDate("date").toLocalDate()
-//                )
-//        );
-//    }
-
-
     //возвращает список посещений одного клиента по его id
     public List<VisitDate> getListOfVisitsDates(int clientId) {
         List<VisitDate> visitDates = new ArrayList<>();
