@@ -1,8 +1,5 @@
 package org.demo.project.DataBase;
 
-import org.demo.project.model.ClubClient;
-import org.demo.project.model.VisitDate;
-
 import javax.enterprise.context.ApplicationScoped;
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,43 +23,63 @@ public class DBUtils {
         return connection;
     }
 
-        public List<ClubClient> select(
-            String sql, Function<ResultSet, ClubClient> mapper) throws SQLException {
-
-        try(Connection connection = connect();
-            PreparedStatement ps = connection.prepareStatement(sql)) {
+    public <T> List<T> select(String sql, Function<ResultSet, T> mapper) throws SQLException {
+        try (Connection connection = connect();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
-            List<ClubClient> result = new ArrayList<>();
-            while(rs.next()) {
+            List<T> result = new ArrayList<>();
+            while (rs.next()) {
                 result.add(mapper.apply(rs));
             }
             return result;
         }
     }
 
-    public List<VisitDate> selectV(
-            String sql, Function<ResultSet, VisitDate> mapper) throws SQLException {
+    public <T> List<T> select(String sql, List<Object> params, Function<ResultSet, T> mapper) throws SQLException {
 
-        try(Connection connection = connect();
-            PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (Connection connection = connect();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            if (params.size() > 0) {
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
+            }
             ResultSet rs = ps.executeQuery();
-            List<VisitDate> result = new ArrayList<>();
-            while(rs.next()) {
+            List<T> result = new ArrayList<>();
+            while (rs.next()) {
                 result.add(mapper.apply(rs));
             }
             return result;
         }
     }
 
+    public int selectCount(String sql, List<Object> params) throws SQLException {
+        int count = 0;
+        try (Connection connection = connect();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            if (params.size() > 0) {
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
+            }
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            count = rs.getInt(1);
+            return count;
+        }
+    }
 
+    //удаление, редактирование, создание
+    public void insert(String sql, List<Object> params) throws SQLException {
 
-    //удаление и не только
-    public void insert(String sql, int clientId) throws SQLException {
-
-        try(Connection connection = connect();
-            PreparedStatement preparedSt = connection.prepareStatement(sql)) {
-            preparedSt.setInt(1, clientId);
-            preparedSt.executeUpdate();
+        try (Connection connection = connect();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            if (params.size() > 0) {
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
+            }
+            ps.executeUpdate();
         }
     }
 

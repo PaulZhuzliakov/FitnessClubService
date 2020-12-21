@@ -1,7 +1,6 @@
 package org.demo.project.repo;
 
 import org.demo.project.DataBase.DBUtils;
-import org.demo.project.model.ClubClient;
 import org.demo.project.model.VisitDate;
 
 import javax.enterprise.context.RequestScoped;
@@ -18,7 +17,7 @@ public class VisitDateRepository {
     DBUtils dbUtils;
 
     //добавляет в таблицу посещаемости дату сегодняшнего посещения
-    public void confirmClientVisit(VisitDate visitDate) {
+    public void confirmClientVisit(VisitDate visitDate) throws SQLException {
         Date currentDate = Date.valueOf(LocalDate.now());
         int clientId = visitDate.getClientId();
         String sql = new StringBuilder()
@@ -29,23 +28,21 @@ public class VisitDateRepository {
                 .append("    )\n")
                 .append("LIMIT 1;")
                 .toString();
-        try (Connection connection = dbUtils.connect();
-             PreparedStatement preparedSt = connection.prepareStatement(sql)) {
-            preparedSt.setDate(1, currentDate);
-            preparedSt.setInt(2, clientId);
-            preparedSt.setInt(3, clientId);
-            preparedSt.setDate(4, currentDate);
-            preparedSt.executeUpdate();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+        List<Object> params = new ArrayList<>();
+        params.add(currentDate);
+        params.add(clientId);
+        params.add(clientId);
+        params.add(currentDate);
+        dbUtils.insert(sql, params);
     }
 
     //возвращает список посещений одного клиента по его id
     public List<VisitDate> getListOfVisitsDates(int clientId) throws SQLException {
-        String sql = "SELECT * FROM attendance WHERE client_id=3";
+        String sql = "SELECT * FROM attendance WHERE client_id=?";
         List<VisitDate> visitDates = new ArrayList<>();
-        visitDates = dbUtils.selectV(sql, resultSet -> {
+        List<Object> params = new ArrayList<>();
+        params.add(clientId);
+        visitDates = dbUtils.select(sql, params, resultSet -> {
             try {
                 return visitDateMapper(resultSet);
             } catch (SQLException throwables) {

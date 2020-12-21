@@ -1,17 +1,16 @@
 package org.demo.project.repo;
 
-import org.demo.project.DataBase.DBUtils;
+        import org.demo.project.DataBase.DBUtils;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
+        import javax.enterprise.context.RequestScoped;
+        import javax.inject.Inject;
+        import java.sql.Connection;
+        import java.sql.PreparedStatement;
 
-//Класс нужен для тестирования расчета стоимости абонимента, исходя из количества посещений зала данным клиентом за последний год.
+//Класс нужен только для тестирования расчета стоимости абонимента, исходя из количества посещений зала данным клиентом за последний год.
 //Для расчета минимальной скидки в таблице посещаемости для выбранного клиента должно быть более 100 записей с датой посещения.
 //Метод addVisits() добавляет требуемое кол-во посещений для клиента по его id, начиная с сегодняшнего дня в обратную сторону -
 //т.е. если в параметрах метода указать 3 дня, то в таблице посещаемости добавятся 3 строки с одиноковым id и датами - сегодня, вчера и позавчера
-//Класс нужен только для тестирования
 
 @RequestScoped
 public class TestRepository {

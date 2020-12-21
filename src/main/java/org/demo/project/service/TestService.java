@@ -12,9 +12,9 @@ public class TestService {
     TestRepository testRepository;
 
 
-    public void addVisits(int id, int days) {
+    public void addVisits(int clientId, int days) {
         try {
-            testRepository.addVisits(id, days);
+            testRepository.addVisits(clientId, days);
         } catch (Exception e) {
             throw new RuntimeException("", e);
         }

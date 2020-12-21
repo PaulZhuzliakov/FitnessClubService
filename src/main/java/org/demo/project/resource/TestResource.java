@@ -19,8 +19,8 @@ public class TestResource {
 
     //добавить требуемое количество посещений для клиента по его id
     @GET
-    public void addVisits(@QueryParam("id") int id,
+    public void addVisits(@QueryParam("id") int clientId,
                           @QueryParam("days") int days) {
-        testService.addVisits(id, days);
+        testService.addVisits(clientId, days);
     }
 }
