@@ -1,11 +1,11 @@
 package org.demo.project.repo;
 
-        import org.demo.project.DataBase.DBUtils;
+import org.demo.project.DataBase.DBUtils;
 
-        import javax.enterprise.context.RequestScoped;
-        import javax.inject.Inject;
-        import java.sql.Connection;
-        import java.sql.PreparedStatement;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 
 //Класс нужен только для тестирования расчета стоимости абонимента, исходя из количества посещений зала данным клиентом за последний год.
 //Для расчета минимальной скидки в таблице посещаемости для выбранного клиента должно быть более 100 записей с датой посещения.

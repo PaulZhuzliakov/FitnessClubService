@@ -28,6 +28,7 @@ public class VisitDate {
     public int getClientId() {
         return clientId;
     }
+
     public void setClientId(int clientId) {
         this.clientId = clientId;
     }

@@ -54,7 +54,6 @@ public class DBUtils {
     }
 
     public int selectCount(String sql, List<Object> params) throws SQLException {
-        int count = 0;
         try (Connection connection = connect();
              PreparedStatement ps = connection.prepareStatement(sql)) {
             if (params.size() > 0) {
@@ -64,12 +63,11 @@ public class DBUtils {
             }
             ResultSet rs = ps.executeQuery();
             rs.next();
-            count = rs.getInt(1);
+            int count = rs.getInt(1);
             return count;
         }
     }
 
-    //удаление, редактирование, создание
     public void insert(String sql, List<Object> params) throws SQLException {
 
         try (Connection connection = connect();
@@ -84,29 +82,3 @@ public class DBUtils {
     }
 
 }
-
-//package org.demo.project.DataBase;
-//
-//        import javax.enterprise.context.ApplicationScoped;
-//        import java.sql.*;
-//
-//@ApplicationScoped
-//public class DBUtils {
-//
-//    final static String url = System.getProperty("url");
-//    final static String user = System.getProperty("user");
-//    final static String pass = System.getProperty("pass");
-//
-//    public Connection connect() {
-//        Connection connection = null;
-//        try {
-//            connection = DriverManager.getConnection(url, user, pass);
-//        } catch (SQLException throwables) {
-//            throwables.printStackTrace();
-//        }
-//        return connection;
-//    }
-//
-////    select(String sql, resultSet -> { return new VisitDate(); //тут заполнение VisitDate из resultSet  } )
-//
-//}
